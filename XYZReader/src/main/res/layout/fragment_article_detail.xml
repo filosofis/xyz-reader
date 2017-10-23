@@ -21,15 +21,14 @@
                 <!--suppress AndroidLintContentDescription -->
                 <ImageView
                     android:id="@+id/photo"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                     />
-
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:scaleType="centerCrop"/>
+                <!-- This background protection currently protects nothing -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="112dp"
                     android:background="@drawable/photo_background_protection" />
-
             </FrameLayout>
 
             <com.example.xyzreader.ui.MaxWidthLinearLayout
@@ -74,19 +73,20 @@
                         android:layout_height="wrap_content"
                         android:textColor="#8fff" />
                 </LinearLayout>
-
+                    <!-- style="?android:attr/textAppearanceMedium" -->
+                    <!-- android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" -->
                 <TextView
-                    android:id="@+id/article_body"
                     style="?android:attr/textAppearanceMedium"
+                    android:id="@+id/article_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/detail_inner_horiz_margin"
                     android:layout_marginRight="@dimen/detail_inner_horiz_margin"
                     android:paddingBottom="@dimen/detail_body_bottom_margin"
-                    android:textColor="@color/ltgray"
+                    android:textColor="@android:color/black"
                     android:textColorLink="@color/theme_accent"
                     android:textSize="@dimen/detail_body_text_size"
-                    android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
+                     />
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
         </FrameLayout>
