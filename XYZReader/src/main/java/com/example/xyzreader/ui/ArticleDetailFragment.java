@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
@@ -27,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -49,8 +49,8 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private int mMutedColor = 0xFF333333;
-    private ObservableScrollView mScrollView;
+    private int mVibrantColor = 0xFF333333;
+    private ScrollView mScrollView;
     private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
 
@@ -115,28 +115,11 @@ public class ArticleDetailFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        mDrawInsetsFrameLayout = (DrawInsetsFrameLayout)
-                mRootView.findViewById(R.id.draw_insets_frame_layout);
-        mDrawInsetsFrameLayout.setOnInsetsCallback(new DrawInsetsFrameLayout.OnInsetsCallback() {
-            @Override
-            public void onInsetsChanged(Rect insets) {
-                mTopInset = insets.top;
-            }
-        });
 
-        mScrollView = (ObservableScrollView) mRootView.findViewById(R.id.scrollview);
-        mScrollView.setCallbacks(new ObservableScrollView.Callbacks() {
-            @Override
-            public void onScrollChanged() {
-                mScrollY = mScrollView.getScrollY();
-                getActivityCast().onUpButtonFloorChanged(mItemId, ArticleDetailFragment.this);
-                mPhotoContainerView.setTranslationY((int) (mScrollY - mScrollY / PARALLAX_FACTOR));
-                updateStatusBar();
-            }
-        });
+        mScrollView = (ScrollView) mRootView.findViewById(R.id.scrollview);
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
-        mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
+        mPhotoContainerView = mRootView.findViewById(R.id.app_bar_layout);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -162,12 +145,11 @@ public class ArticleDetailFragment extends Fragment implements
                     mStatusBarFullOpacityBottom - mTopInset * 3,
                     mStatusBarFullOpacityBottom - mTopInset);
             color = Color.argb((int) (255 * f),
-                    (int) (Color.red(mMutedColor) * 0.9),
-                    (int) (Color.green(mMutedColor) * 0.9),
-                    (int) (Color.blue(mMutedColor) * 0.9));
+                    (int) (Color.red(mVibrantColor) * 0.9),
+                    (int) (Color.green(mVibrantColor) * 0.9),
+                    (int) (Color.blue(mVibrantColor) * 0.9));
         }
         mStatusBarColorDrawable.setColor(color);
-        mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
     }
 
     static float progress(float v, float min, float max) {
@@ -239,11 +221,17 @@ public class ArticleDetailFragment extends Fragment implements
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
+                                //Palette p = Palette.generate(bitmap, 12);
+                                Palette p = createPaletteSync(bitmap);
+                                Palette.Swatch vibrantSwatch = checkVibrantSwatch(p);
+                                if(vibrantSwatch != null) {
+                                    mVibrantColor = vibrantSwatch.getRgb();
+                                }else{ //Safe color in case no vibrant color could be found
+                                    mVibrantColor = R.color.primary_accent;
+                                }
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
-                                        .setBackgroundColor(mMutedColor);
+                                        .setBackgroundColor(mVibrantColor);
                                 updateStatusBar();
                             }
                         }
@@ -300,5 +288,40 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    // Return a palette's vibrant swatch after checking that it exists
+    private Palette.Swatch checkVibrantSwatch(Palette p) {
+        Palette.Swatch vibrant = p.getVibrantSwatch();
+        Palette.Swatch lightVibrant = p.getLightVibrantSwatch();
+        Palette.Swatch darkVibrant = p.getDarkVibrantSwatch();
+        if (vibrant != null) {
+            System.out.println("Successfully returning a VIBRANT swatch");
+            return vibrant;
+        }else if(lightVibrant != null){
+            System.out.println("Successfully returning a LIGHT_VIBRANT swatch");
+            return lightVibrant;
+        }else if(darkVibrant != null){
+            System.out.println("Successfully returning a DARk_VIBRANT swatch");
+            return darkVibrant;
+        }else{
+            System.out.println("Was that shit even a picture?");
+            return null;
+        }
+    }
+    // Generate palette synchronously and return it
+    public Palette createPaletteSync(Bitmap bitmap) {
+        Palette p = Palette.from(bitmap).generate();
+        return p;
+    }
+
+    // Generate palette asynchronously and use it on a different
+    // thread using onGenerated()
+    public void createPaletteAsync(Bitmap bitmap) {
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            public void onGenerated(Palette p) {
+                // Use generated instance
+            }
+        });
     }
 }
