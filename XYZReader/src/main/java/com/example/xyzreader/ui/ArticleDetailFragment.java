@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
@@ -25,6 +26,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -53,6 +56,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ScrollView mScrollView;
     private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private int mTopInset;
     private View mPhotoContainerView;
@@ -116,9 +120,10 @@ public class ArticleDetailFragment extends Fragment implements
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        mScrollView = (ScrollView) mRootView.findViewById(R.id.scrollview);
+        mScrollView = mRootView.findViewById(R.id.scrollview);
 
-        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        mPhotoView = mRootView.findViewById(R.id.photo);
+        mCollapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar);
         mPhotoContainerView = mRootView.findViewById(R.id.app_bar_layout);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
@@ -229,7 +234,17 @@ public class ArticleDetailFragment extends Fragment implements
                                 }else{ //Safe color in case no vibrant color could be found
                                     mVibrantColor = R.color.primary_accent;
                                 }
+                                Window window = getActivity().getWindow();
+                                window.setStatusBarColor(mVibrantColor);
+                                mRootView.findViewById(R.id.app_bar_layout).
+                                        setBackgroundColor(mVibrantColor);
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
+                                mCollapsingToolbarLayout.
+                                        setContentScrimColor(mVibrantColor);
+                                mCollapsingToolbarLayout.
+                                        setStatusBarScrimColor(mVibrantColor);
+                                mCollapsingToolbarLayout
+                                        .setBackgroundColor(mVibrantColor);
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mVibrantColor);
                                 updateStatusBar();
@@ -290,11 +305,21 @@ public class ArticleDetailFragment extends Fragment implements
                 : mPhotoView.getHeight() - mScrollY;
     }
 
-    // Return a palette's vibrant swatch after checking that it exists
+    /**
+     * Attempts to return a Swatch after the following priority:
+     * 1. Vibrant
+     * 2. Light Vibrant
+     * 3. Dark Vibrant
+     * 4. Muted
+     * If all fails returns null.
+     * @param p
+     * @return Palette.Swatch
+     */
     private Palette.Swatch checkVibrantSwatch(Palette p) {
         Palette.Swatch vibrant = p.getVibrantSwatch();
         Palette.Swatch lightVibrant = p.getLightVibrantSwatch();
         Palette.Swatch darkVibrant = p.getDarkVibrantSwatch();
+        Palette.Swatch muted = p.getMutedSwatch();
         if (vibrant != null) {
             System.out.println("Successfully returning a VIBRANT swatch");
             return vibrant;
@@ -302,8 +327,11 @@ public class ArticleDetailFragment extends Fragment implements
             System.out.println("Successfully returning a LIGHT_VIBRANT swatch");
             return lightVibrant;
         }else if(darkVibrant != null){
-            System.out.println("Successfully returning a DARk_VIBRANT swatch");
+            System.out.println("Successfully returning a DARK_VIBRANT swatch");
             return darkVibrant;
+        }else if(muted != null){
+            System.out.println("Successfully returning a MUTED swatch");
+            return muted;
         }else{
             System.out.println("Was that shit even a picture?");
             return null;
@@ -313,15 +341,5 @@ public class ArticleDetailFragment extends Fragment implements
     public Palette createPaletteSync(Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();
         return p;
-    }
-
-    // Generate palette asynchronously and use it on a different
-    // thread using onGenerated()
-    public void createPaletteAsync(Bitmap bitmap) {
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            public void onGenerated(Palette p) {
-                // Use generated instance
-            }
-        });
     }
 }
