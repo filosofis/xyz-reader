@@ -18,7 +18,9 @@ import java.util.GregorianCalendar;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -98,6 +100,7 @@ public class ArticleDetailFragment extends Fragment implements
         mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
                 R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
+
     }
 
     public ArticleDetailActivity getActivityCast() {
@@ -236,8 +239,8 @@ public class ArticleDetailFragment extends Fragment implements
                                 }
                                 Window window = getActivity().getWindow();
                                 window.setStatusBarColor(mVibrantColor);
-                                mRootView.findViewById(R.id.app_bar_layout).
-                                        setBackgroundColor(mVibrantColor);
+                                /*mRootView.findViewById(R.id.app_bar_layout).
+                                        setBackgroundColor(mVibrantColor);*/
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mCollapsingToolbarLayout.
                                         setContentScrimColor(mVibrantColor);
@@ -342,4 +345,5 @@ public class ArticleDetailFragment extends Fragment implements
         Palette p = Palette.from(bitmap).generate();
         return p;
     }
+    
 }
