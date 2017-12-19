@@ -309,12 +309,12 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     /**
-     * Attempts to return a Swatch after the following priority:
+     * Attempts to return a Swatch from a Palette p after the following priority:
      * 1. Vibrant
      * 2. Light Vibrant
      * 3. Dark Vibrant
      * 4. Muted
-     * If all fails returns null.
+     * If all else fails returns null.
      * @param p
      * @return Palette.Swatch
      */
@@ -345,5 +345,5 @@ public class ArticleDetailFragment extends Fragment implements
         Palette p = Palette.from(bitmap).generate();
         return p;
     }
-    
+
 }
