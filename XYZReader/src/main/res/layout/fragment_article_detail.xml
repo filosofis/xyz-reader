@@ -93,14 +93,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        app:fabSize="normal"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:background="@drawable/add_fab_background"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:contentDescription="@string/action_share"
         android:elevation="@dimen/fab_elevation"
         android:src="@drawable/ic_share"

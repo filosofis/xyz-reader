@@ -19,10 +19,13 @@
 
     <style name="Theme.Bacon" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!--<item name="colorPrimaryLight">@color/primary_light</item>-->
+        <item name="colorAccent">@color/primary_accent</item>
     </style>
 
-    <style name="Theme.Bacon.Detail">
-    </style>
+
 
 
 

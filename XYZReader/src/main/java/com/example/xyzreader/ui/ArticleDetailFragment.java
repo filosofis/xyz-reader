@@ -312,7 +312,7 @@ public class ArticleDetailFragment extends Fragment implements
      * Attempts to return a Swatch from a Palette p after the following priority:
      * 1. Vibrant
      * 2. Light Vibrant
-     * 3. Dark Vibrant
+     * 3. Dark Vibrant //removed to keep black text safe
      * 4. Muted
      * If all else fails returns null.
      * @param p
@@ -329,9 +329,10 @@ public class ArticleDetailFragment extends Fragment implements
         }else if(lightVibrant != null){
             System.out.println("Successfully returning a LIGHT_VIBRANT swatch");
             return lightVibrant;
+            /* Removed because unsafe with black text
         }else if(darkVibrant != null){
             System.out.println("Successfully returning a DARK_VIBRANT swatch");
-            return darkVibrant;
+            return darkVibrant;*/
         }else if(muted != null){
             System.out.println("Successfully returning a MUTED swatch");
             return muted;
