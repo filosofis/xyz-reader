@@ -18,8 +18,11 @@ package com.example.xyzreader.ui;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.ScrollView;
 
 /**
