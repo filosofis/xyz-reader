@@ -32,11 +32,9 @@ public class FabScrollViewBehaviour extends CoordinatorLayout.Behavior<FloatingA
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
 
         if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
-            System.out.println("Hiding");
-            child.hide();
+            child.setVisibility(View.INVISIBLE);
         } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
-            System.out.println("Showing");
-            child.show();
+            child.setVisibility(View.VISIBLE);
         }
     }
 }
