@@ -1,2 +1,2 @@
-#XYZ News Reader App 
-made as part of Udacity's Android Nanodegree.
+# XYZ News 
+A news reader app made as part of Udacity's Android Nanodegree.
